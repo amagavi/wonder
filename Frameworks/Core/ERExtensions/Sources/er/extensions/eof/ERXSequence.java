@@ -131,9 +131,9 @@ public class ERXSequence {
 			super(name, initialValue);
 			EOModel model = ERXEOAccessUtilities.modelGroup(ec).modelNamed(modelName);
 			_broker = ERXJDBCConnectionBroker.connectionBrokerForModel(model);
-			_lastValue = increasedMaxValue(0);
-			_maxValue = _lastValue;			
     		_factory = new EOSQLExpressionFactory(EOAdaptor.adaptorWithName(model.adaptorName()));
+			_lastValue = increasedMaxValue(0);
+			_maxValue = _lastValue;
 		}
 
 		public DatabaseSequence(EOEditingContext ec, String modelName, String name) {
@@ -151,7 +151,7 @@ public class ERXSequence {
 			String columnList = VALUE_COLUMN_NAME;
 			String tableList = ERX_SEQUENCE_TABLE;
 			String whereSelector = selectExpression.sqlStringForSelector(EOQualifier.QualifierOperatorEqual, name());
-			String whereClause = NAME_COLUMN_NAME + whereSelector;
+			String whereClause = NAME_COLUMN_NAME + " " + whereSelector + " '" + name() + "'";
 			String lockClause = selectExpression.lockClause();
 
 			String selectStatement = selectExpression.assembleSelectStatementWithAttributes(null, true, null, null, "SELECT ", columnList , tableList, whereClause, null, null, lockClause);
@@ -176,7 +176,7 @@ public class ERXSequence {
 			String incrementString = EOSQLExpression.sqlStringForNumber(Long.valueOf(increment));
 			String tableList = ERX_SEQUENCE_TABLE;
 			String columnList = NAME_COLUMN_NAME + "," + VALUE_COLUMN_NAME;
-			String valueList = name() + "," + incrementString;
+			String valueList = "'" + name() + "'," + incrementString;
 			String insertStatement = _factory.expressionForEntity(null).assembleInsertStatementWithRow(null, tableList, columnList, valueList);
 			con.createStatement().executeUpdate(insertStatement);
 			return 0L;
@@ -237,11 +237,12 @@ public class ERXSequence {
 		protected boolean isCreationError(SQLException ex) {
 			String s = ex.getMessage().toLowerCase();
     		boolean creationError = false;
-    		creationError |= (s.indexOf("error code 116") != -1); // frontbase?
-			creationError |= (s.indexOf(DatabaseSequence.ERX_SEQUENCE_TABLE) != -1 && s.indexOf("does not exist") != -1); // postgres ?
+    		String tableNameLastComponent = DatabaseSequence.ERX_SEQUENCE_TABLE.substring(DatabaseSequence.ERX_SEQUENCE_TABLE.lastIndexOf('.')+1);
+    		creationError |= (s.indexOf("error 116") != -1); // frontbase?
+			creationError |= (s.indexOf(tableNameLastComponent) != -1 && s.indexOf("does not exist") != -1); // postgres ?
 			creationError |= s.indexOf("ora-00942") != -1; // oracle
 			creationError |= s.indexOf("doesn't exist") != -1; // mysql
-			creationError |= (s.indexOf(DatabaseSequence.ERX_SEQUENCE_TABLE) != -1 && s.indexOf("not found.") != -1); // sybase
+			creationError |= (s.indexOf(tableNameLastComponent) != -1 && s.indexOf("not found.") != -1); // sybase
 			return creationError;
 		}
 	}
