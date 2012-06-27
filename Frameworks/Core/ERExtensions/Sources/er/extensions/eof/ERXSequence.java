@@ -131,7 +131,7 @@ public class ERXSequence {
 			super(name, initialValue);
 			EOModel model = ERXEOAccessUtilities.modelGroup(ec).modelNamed(modelName);
 			_broker = ERXJDBCConnectionBroker.connectionBrokerForModel(model);
-    		_factory = new EOSQLExpressionFactory(EOAdaptor.adaptorWithName(model.adaptorName()));
+    		_factory = new EOSQLExpressionFactory(EOAdaptor.adaptorWithModel(model));
 			_lastValue = increasedMaxValue(0);
 			_maxValue = _lastValue;
 		}
