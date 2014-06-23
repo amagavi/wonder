@@ -6,6 +6,7 @@
  * included with this distribution in the LICENSE.NPL file.  */
 package er.extensions.eof.qualifiers;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.webobjects.eoaccess.EOAttribute;
@@ -128,19 +129,57 @@ public class ERXToManyQualifier extends ERXKeyValueQualifier implements Cloneabl
         public ToManyQualifierSQLGenerationSupport() {
             super();
         }
+        
 
-        protected static void appendColumnForAttributeToStringBuilder(EOAttribute attribute, StringBuilder sb) {
-            sb.append(attribute.entity().externalName());
-            sb.append('.');
-            sb.append(attribute.columnName());
+		/**
+		 * Surround any SQL Identifiers in the sqlSnippet with the appropriate
+		 * external name quote character for the database. This takes into
+		 * account both <b>if</b> the identifiers should be quoted, and what the
+		 * quote character is. e.g., double quote for FrontBase and back-tick
+		 * for MySQL. If the identifier(s) found in the sqlSnippet are already
+		 * quoted, they will not be quoted again.
+		 * 
+		 * @see EOSQLExpression#externalNameQuoteCharacter()
+		 * @see EOSQLExpression#sqlStringForSchemaObjectName(String)
+		 * 
+		 * @param expression
+		 * @param sqlSnippet
+		 * @return same string but with each identifier wrapped in the
+		 *         {@link EOSQLExpression#externalNameQuoteCharacter()} if
+		 *         required, or null if sqlSnippet is null
+		 * 
+		 */
+		protected static String schemaSafe(final EOSQLExpression expression, final String sqlSnippet) {
+			StringBuilder safeSnippet = new StringBuilder();
+        	if (sqlSnippet != null) {
+        		String unquotedSnippet = sqlSnippet.replace(expression.externalNameQuoteCharacter(), "");
+        		final NSArray<String> sqlIdentfiers = NSArray.componentsSeparatedByString(unquotedSnippet, ".");
+
+        		for (String sqlIdentifier : sqlIdentfiers) {
+					sqlIdentifier = sqlIdentifier.trim();
+					if (StringUtils.isNotBlank(sqlIdentifier)) {
+						sqlIdentifier = expression.sqlStringForSchemaObjectName(sqlIdentifier);
+
+						if (StringUtils.isNotEmpty(sqlIdentifier)) {
+							safeSnippet.append(".");
+						} 						
+						safeSnippet.append(sqlIdentifier);
+					}
+				}
+			}
+        	return safeSnippet.toString();
+        }
+
+        protected static void appendColumnForAttributeToStringBuilder(EOSQLExpression expression, EOAttribute attribute, StringBuilder sb) {
+        	sb.append(schemaSafe(expression, attribute.entity().externalName() + "." + attribute.columnName()));
         }
 
 		@Override
         @SuppressWarnings("unchecked")
-		public String sqlStringForSQLExpression(EOQualifier eoqualifier, EOSQLExpression e) {
+		public String sqlStringForSQLExpression(EOQualifier eoqualifier, EOSQLExpression expression) {
             ERXToManyQualifier qualifier = (ERXToManyQualifier)eoqualifier;
             StringBuilder result = new StringBuilder();
-            EOEntity targetEntity=e.entity();
+            EOEntity targetEntity=expression.entity();
 
             NSArray<String> toManyKeys=NSArray.componentsSeparatedByString(qualifier.key(),".");
             EORelationship targetRelationship=null;
@@ -170,45 +209,45 @@ public class ERXToManyQualifier extends ERXKeyValueQualifier implements Cloneabl
                 lastStopPKeyPath.addObject(firstHopRelationship.name());
                 lastStopPKeyPath.addObject(targetAttribute.name());
                 String firstHopRelationshipKeyPath=lastStopPKeyPath.componentsJoinedByString(".");
-                result.append(e.sqlStringForAttributeNamed(firstHopRelationshipKeyPath));
+                result.append(expression.sqlStringForAttributeNamed(firstHopRelationshipKeyPath));
                 result.append(" IN ( SELECT ");
 
-                result.append(lastStopEntity.externalName());
+                result.append(schemaSafe(expression, lastStopEntity.externalName()));
                 result.append('.');
-                result.append(lastStopEntity.primaryKeyAttributes().objectAtIndex(0).columnName());
+                result.append(schemaSafe(expression, lastStopEntity.primaryKeyAttributes().objectAtIndex(0).columnName()));
 
                 result.append(" FROM ");
 
-                result.append(lastStopEntity.externalName());
+                result.append(schemaSafe(expression, lastStopEntity.externalName()));
                 result.append(',');
 
                 lastStopPKeyPath.removeLastObject();
-                String tableAliasForJoinTable=(String)e.aliasesByRelationshipPath().
+                String tableAliasForJoinTable=(String)expression.aliasesByRelationshipPath().
                     objectForKey(lastStopPKeyPath.componentsJoinedByString("."));//"j"; //+random#
-                result.append(endOfFirstHopEntity.externalName());
+                result.append(schemaSafe(expression, endOfFirstHopEntity.externalName()));
                 result.append(' ');
                 result.append(tableAliasForJoinTable);
 
                 result.append(" WHERE ");
 
-                appendColumnForAttributeToStringBuilder(sourceAttribute, result);
+                appendColumnForAttributeToStringBuilder(expression, sourceAttribute, result);
                 result.append('=');
-                result.append(e.sqlStringForAttributeNamed(firstHopRelationshipKeyPath));
+                result.append(expression.sqlStringForAttributeNamed(firstHopRelationshipKeyPath));
                 
                 if(qualifier.elements() != null) {
                     NSArray pKeys=ERXEOAccessUtilities.primaryKeysForObjects(qualifier.elements());
                     result.append(" AND ");
                     
-                    result.append(tableAliasForJoinTable);
+                    result.append(schemaSafe(expression, tableAliasForJoinTable));
                     result.append('.');
-                    result.append(secondHopSourceAttribute.columnName());
+                    result.append(schemaSafe(expression, secondHopSourceAttribute.columnName()));
                     
                     result.append(" IN ("); 
                     EOAttribute pk = targetEntity.primaryKeyAttributes().lastObject();
                     for(int i = 0; i < pKeys.count(); i++) {
                         
                         Object key = pKeys.objectAtIndex(i);
-                        String keyString = e.formatValueForAttribute(key, pk);
+                        String keyString = expression.formatValueForAttribute(key, pk);
                         //AK: default is is broken
                         if("NULL".equals(keyString)) {
                         	keyString = "" + key;
@@ -221,8 +260,7 @@ public class ERXToManyQualifier extends ERXKeyValueQualifier implements Cloneabl
                     result.append(") ");
                 }
                 result.append(" GROUP BY ");
-                appendColumnForAttributeToStringBuilder(sourceAttribute, result);
-
+                appendColumnForAttributeToStringBuilder(expression, sourceAttribute, result);
                 result.append(" HAVING COUNT(*)");
                 if (qualifier.minCount() <= 0) {
                     result.append("=" + qualifier.elements().count());
