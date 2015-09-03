@@ -287,14 +287,18 @@ public class ERMailUtils {
 	 * </span>
 	 */
 	public static InternetAddress[] convertNSArrayToInternetAddresses(NSArray addrs) throws AddressException {
-		if (addrs == null)
+		if (addrs == null) {
 			return new InternetAddress[0];
+		}
 		InternetAddress[] addrArray = new InternetAddress[addrs.count()];
 
 		Enumeration en = addrs.objectEnumerator();
 		for (int i = 0; en.hasMoreElements(); i++) {
 			String anAddress = (String) en.nextElement();
-			addrArray[i] = new InternetAddress(anAddress);
+			//addrArray[i] = new InternetAddress(anAddress, false /*strict*/);
+			InternetAddress temporaryAddress = new InternetAddress();
+			temporaryAddress.setAddress(anAddress);
+			addrArray[i] = temporaryAddress;
 		}
 
 		return addrArray;
@@ -328,19 +332,22 @@ public class ERMailUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static NSArray<String> convertInternetAddressesToNSArray(Address[] addressesArray) {
-		if (addressesArray == null)
+		if (addressesArray == null) {
 			return NSArray.EmptyArray;
+		}
 		NSMutableArray<String> addresses = new NSMutableArray<String>(addressesArray.length);
 
 		for (int i = 0; i < addressesArray.length; i++) {
 			Address anAddress = addressesArray[i];
 			String emailAddress = null;
 
-			if (anAddress instanceof InternetAddress)
+			if (anAddress instanceof InternetAddress) {
 				emailAddress = ((InternetAddress) anAddress).toUnicodeString();
-			else
+			}
+			else {
 				// anAddress will be a instance of Address
 				emailAddress = anAddress.toString();
+			}
 
 			addresses.addObject(emailAddress);
 		}
@@ -375,8 +382,9 @@ public class ERMailUtils {
 	 * </span>
 	 */
 	public static InternetAddress[] convertNSDictionaryToInternetAddresses(NSDictionary<String, String> addrs, String charset) throws AddressException {
-		if (addrs == null || addrs.isEmpty())
+		if (addrs == null || addrs.isEmpty()) {
 			return new InternetAddress[0];
+		}
 		InternetAddress[] addrArray = new InternetAddress[addrs.count()];
 		InternetAddress address;
 		int i = 0;
@@ -402,7 +410,7 @@ public class ERMailUtils {
 				}
 			}
 			else {
-				address = new InternetAddress(email);
+				address = new InternetAddress(email, false /*strict*/);
 			}
 			addrArray[i++] = address;
 		}

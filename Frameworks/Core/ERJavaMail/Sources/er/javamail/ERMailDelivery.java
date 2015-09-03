@@ -239,8 +239,9 @@ public abstract class ERMailDelivery {
 	}
 
 	protected NSMutableArray<ERMailAttachment> _inlineAttachments() {
-		if (_inlineAttachments == null)
+		if (_inlineAttachments == null) {
 			_inlineAttachments = new NSMutableArray<ERMailAttachment>();
+		}
 		return _inlineAttachments;
 	}
 
@@ -249,8 +250,9 @@ public abstract class ERMailDelivery {
 	}
 
 	protected NSMutableArray<ERMailAttachment> _attachments() {
-		if (_attachments == null)
+		if (_attachments == null) {
 			_attachments = new NSMutableArray<ERMailAttachment>();
+		}
 		return _attachments;
 	}
 
@@ -292,7 +294,7 @@ public abstract class ERMailDelivery {
 			}
 		}
 		else {
-			address = new InternetAddress(email);
+			address = new InternetAddress(email, false /*strict*/);
 		}
 
 		return address;
@@ -606,8 +608,9 @@ public abstract class ERMailDelivery {
 			ERMailSender sender = ERMailSender.sharedMailSender();
 			ERMessage message = buildMessage();
 
-			if (shouldBlock)
+			if (shouldBlock) {
 				sender.sendMessageNow(message);
+			}
 			else {
 				// add the current message to the message stack
 				boolean mailAccepted = false;
