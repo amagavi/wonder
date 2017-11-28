@@ -1,0 +1,71 @@
+/* 
+ * --------------------------------------------------------------------------  
+ * See AppDetailShowHide.js
+ * 
+ * Contributed to Project Wonder, open-source, "as-is"
+ * No warranties expressed or implied. 
+ * 
+ *  Written by Marco A. Gonzalez, Codivus Corporation
+ *  http://www.amagavi.com
+ *  http://www.codivus.com
+ *  email: marcoinc@mac.com
+ *
+ *--------------------------------------------------------------------------*/
+div.Box.ApplicationDetailsBox div#ShowHideInstancesDivID,
+div.Box.ApplicationDetailsBox div#IgnoreStatisticsDivID
+{
+  border: 1px dotted blue;
+  border-radius: 5px;
+  padding: 0.25em;
+  display: block;
+}
+
+div.Box.ApplicationDetailsBox div#IgnoreStatisticsDivID
+{
+  position: absolute;
+  left: 50em;
+  top: 0.75em;
+  width: 13em;
+}
+
+
+div.Box.ApplicationDetailsBox div#ShowHideInstancesDivID
+{
+  position: absolute;
+  left: 30em;
+  top: 0.75em;
+  width: 18em;
+}
+
+
+
+div#ShowHideInstancesDivID label,
+div#IgnoreStatisticsDivID label
+{
+  display: block;
+  white-space: nowrap;
+  float: none;
+}
+
+/*
+  In Detail View, the App Instance Name column doesn't have a
+  css class, as in <td class="InstanceName">
+  Until it does, this css entry forces the contents to not wrap
+*/
+#ContentWrapper > div.Box.ApplicationDetailsBox > table > tbody > tr td:nth-child(2)
+{
+  white-space: nowrap;
+}
+
+
+div.Box.ApplicationDetailsBox a.ShowHideColumn
+{
+  display: inline-block;
+  margin-left: 1em;
+}
+
+/* enables add-on functionality to be absolutely positioned */
+div.Box.ApplicationDetailsBox
+{
+  position: relative;
+}

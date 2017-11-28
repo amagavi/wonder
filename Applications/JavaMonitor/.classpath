@@ -15,5 +15,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="WOFramework/ERRest"/>
 	<classpathentry kind="con" path="WOFramework/WOLips"/>
+	<classpathentry kind="con" path="WOFramework/WOOgnl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

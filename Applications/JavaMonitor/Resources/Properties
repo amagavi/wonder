@@ -37,3 +37,6 @@ er.javamonitor.showMigrationsTab=false
 
 # Show the Mod_Proxy tab.
 er.javamonitor.showModProxyTab=true
+
+ognl.inlineBindings=true
+ognl.helperFunctions=true
