@@ -47,6 +47,17 @@ ERXStyleSheet : ERXStyleSheet {
   framework = "app";
 }
 
+AppDetailCSS : ERXStyleSheet {
+  filename = "AppDetailShowHide.css";
+  framework = "app";
+}
+
+AppDetailJavascript: ERXJavaScript {
+	filename = "AppDetailShowHide.js";
+	framework = "app";
+}
+
+
 Body1 : WOGenericContainer {
   id = pageId;
   elementName = "body";
