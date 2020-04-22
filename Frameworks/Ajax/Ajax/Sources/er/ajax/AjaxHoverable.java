@@ -165,7 +165,11 @@ public class AjaxHoverable extends WOComponent {
 	
 	public String toolTipInlineStyle() {
 		String userDefined = (String) valueForBinding("additionalStyleToolTip");
-		String inlineStyle = "width: " + toolTipWidth() + "; ";
+
+		String inlineStyle = "";
+		if (ERXStringUtilities.isNotBlank(toolTipWidth())) {
+			inlineStyle = "width: " + toolTipWidth() + "; ";
+		}
 		
 		String toolTipHeight = (String) valueForBinding("toolTipHeight");
 		if (ERXStringUtilities.isNotBlank(toolTipHeight)) {
