@@ -2,6 +2,7 @@ package com.webobjects.jdbcadaptor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,6 +132,28 @@ public class PostgresqlPlugIn extends JDBCPlugIn {
       }
     } else {
       jdbcInfo = super.jdbcInfo();
+      
+      // From Ralf Schuchardt - rasc@gmx.de - This will close the the open transaction of JDBC info
+      final JDBCContext context = adaptor()._cachedAdaptorContext();
+      NSLog.debug.appendln("Called jdbcInfo on PostgreSQL-Plugin "+System.identityHashCode(this)+
+                           " with adaptor "+System.identityHashCode(adaptor())+
+                           " with JDBC Context "+System.identityHashCode(context));
+      if (context != null) {
+          /*
+           * Close JDBC Info connection.
+           * The current JDBCAdaptor doesn't commit the transaction and doesn't close its connection after fetching
+           * the JDBC Info, but instead let the transaction stay in an idle state. Open idle transactions consume 
+           * database resources better spent elsewhere. So we commit and close the connection used to fetch the info.
+           */
+          try {
+              context.connection().commit();
+          }
+          catch (SQLException e) {
+              NSLog.err.appendln(e);
+          }
+          adaptor()._cachedAdaptorContext().disconnect();
+          NSLog.debug.appendln("Disconnect called on JDBC context "+System.identityHashCode(context));
+      }
     }
     return jdbcInfo;
   }
