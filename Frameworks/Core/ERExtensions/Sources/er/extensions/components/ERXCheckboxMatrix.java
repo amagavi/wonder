@@ -136,7 +136,7 @@ public class ERXCheckboxMatrix extends ERXNonSynchronizingComponent {
     }
     
     public void setSelections(NSArray aFormValuesArray) {
-    	if(aFormValuesArray!=null && !disabled()){
+    	if(aFormValuesArray!=null){
             // ** This is where we accept the formValues.  Kind of weird.
             NSMutableArray aSelectionsArray = new NSMutableArray();
             Enumeration anIndexEnumerator = aFormValuesArray.objectEnumerator();
