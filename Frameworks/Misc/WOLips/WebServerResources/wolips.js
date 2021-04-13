@@ -169,7 +169,7 @@ var WOLipsClickToOpen = {
     var componentNamesList = document.createElement("ul");
     componentNames.each(function(componentName, index) {
       var componentNameItem = document.createElement("li");
-      componentNameItem._componentName = componentName;
+      componentNameItem.dataset.componentName = componentName;
       if (componentName == null) {
         componentNameItem.innerHTML = 'Cancel';
       }
@@ -177,8 +177,8 @@ var WOLipsClickToOpen = {
         componentNameItem.innerHTML = componentName.split('.').last();
       }
       componentNameItem.onclick = function() {
-        if (componentNameItem._componentName != null) {
-          WOLipsClickToOpen.openComponentNamed(componentNameItem._componentName);
+        if (componentNameItem.dataset.componentName != null) {
+          WOLipsClickToOpen.openComponentNamed(componentNameItem.dataset.componentName);
         }
         WOLipsClickToOpen.hideComponentList();
       };
@@ -194,8 +194,8 @@ var WOLipsClickToOpen = {
     var firstComponentElement = null;
     var componentNamesStr = null;
     while (target != null) {
-      if (target.getAttribute) {
-        var componentName = target.getAttribute('_componentName');
+      if (target.dataset) {
+        var componentName = target.dataset.componentName;
         if (componentName != null) {
           if (componentNamesStr == null) {
             componentNamesStr = componentName;
