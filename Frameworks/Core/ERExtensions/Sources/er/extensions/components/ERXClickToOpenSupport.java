@@ -95,7 +95,7 @@ public class ERXClickToOpenSupport {
 						int attributeOffset = tagMatcher.end();
 	
 						String componentName = component.getName();
-						String componentNameTag = "_componentName";
+						String componentNameTag = "data-component-name";
 						if (ERXStringUtilities.regionMatches(contentStringBuffer, attributeOffset, componentNameTag, 0, componentNameTag.length())) {
 							int openQuoteIndex = contentStringBuffer.indexOf("\"", attributeOffset);
 							contentStringBuffer.insert(openQuoteIndex + 1, componentName + ",");
