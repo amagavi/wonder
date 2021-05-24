@@ -249,7 +249,7 @@ public class CCDatePicker extends ERXStatelessComponent {
 	
 	public String elementID() {
 		if (_elementID == null) {
-			_elementID = ERXStringUtilities.safeIdentifierName(context().elementID(), "datebox");
+			_elementID = hasBinding("id") ? stringValueForBinding("id") : ERXStringUtilities.safeIdentifierName(context().elementID(), "datebox");
 		}
 		return _elementID;
 	}
