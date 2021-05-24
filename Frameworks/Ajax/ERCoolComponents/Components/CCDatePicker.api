@@ -1,6 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wodefinitions>
-        <wo wocomponentcontent="false" class="CCDatePicker.java">
+                                        
+    
+    
+    
+    
+    
+    
+    
+    <wo class="CCDatePicker.java" wocomponentcontent="false">
+                                                                        
+        
+        
+        
+        
+        
+        
+        
+        <binding name="dateIn"/>
+                                                            
+        
+        
+        
+        
+        
+        
+        <binding name="cssFile"/>
+                                                    
+        
+        
+        
+        
+        
+        <binding name="cssFramework"/>
+                                            
+        
+        
+        
+        
+        <binding name="dateformat"/>
+                                    
+    
+        
+        
+        <binding defaults="Boolean" name="injectStylesheet"/>
+                    
+    
+        <binding name="id"/>
+    </wo>
+                                
 
-        </wo>
+
+
+
+
+
+
 </wodefinitions>
