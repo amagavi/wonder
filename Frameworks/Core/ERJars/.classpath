@@ -17,7 +17,11 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/icu4j-63.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="Libraries/log4j-core-2.17.1.jar" sourcepath="LibrarySources/log4j-core-2.17.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/log4j-core-2.17.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-codec-1.11.jar" sourcepath="LibrarySources/commons-codec-1.11-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/commons-codec-1.11-javadoc.jar!/"/>
@@ -78,14 +82,9 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/httpmime-4.5.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-log4j12-1.7.25.jar" sourcepath="LibrarySources/slf4j-log4j12-1.7.25-sources.jar">
+	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.32.jar" sourcepath="LibrarySources/slf4j-api-1.7.32-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-log4j12-1.7.25-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.25.jar" sourcepath="LibrarySources/slf4j-api-1.7.25-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-api-1.7.25-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-api-1.7.32-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="Libraries/ognl-3.2.10.jar" sourcepath="LibrarySources/ognl-3.2.10-sources.jar">
