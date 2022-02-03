@@ -164,6 +164,13 @@ var AjaxOnDemand = {
 	loadedScript: function(request) {
 		Prototype.exec(request.responseText);
 	},
+
+	loadScriptAsModule: function(script) {
+		var newScript = document.createElement("script");
+		newScript.type = "module";
+		newScript.src = script;
+		document.head.appendChild(newScript);
+	},
 	
 	loadCSS: function(css) {
         var link=document.createElement("link");

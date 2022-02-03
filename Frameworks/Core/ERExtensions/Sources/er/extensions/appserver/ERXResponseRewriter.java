@@ -20,6 +20,7 @@ import com.webobjects.foundation.NSMutableSet;
 import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
 
+import er.extensions.appserver.ERXResponseRewriter.TagMissingBehavior;
 import er.extensions.appserver.ajax.ERXAjaxApplication;
 import er.extensions.components.ERXStyleSheet;
 import er.extensions.foundation.ERXProperties;
@@ -415,24 +416,58 @@ public class ERXResponseRewriter {
 	 *            the name of the javascript file to add
 	 */
 	public static void addScriptResourceInHead(WOResponse response, WOContext context, String framework, String fileName) {
+		addScriptResourceInHead(response, context, framework, fileName, false /*asModule*/);
+	}
+
+	/**
+	 * Adds a script tag with a correct resource URL into the HTML head tag if
+	 * it isn't already present in the response, or inserts an Ajax OnDemand tag
+	 * if the current request is an Ajax request.
+	 * 
+	 * @param response
+	 *            the response
+	 * @param context
+	 *            the context
+	 * @param framework
+	 *            the framework that contains the file
+	 * @param fileName
+	 *            the name of the javascript file to add
+	 * @param asModule
+	 *            when true, inserts into head tag as type=module
+	 */
+	public static void addScriptResourceInHead(WOResponse response, WOContext context, String framework, String fileName, boolean asModule) {
 		boolean appendTypeAttribute = ERXProperties.booleanForKeyWithDefault("er.extensions.ERXResponseRewriter.javascriptTypeAttribute", false);
+
 		String scriptStartTag;
-		if (appendTypeAttribute) {
-			scriptStartTag = "<script type=\"text/javascript\" src=\"";
+		if (asModule) {
+			scriptStartTag = "<script type=\"module\" src=\"";
+		} else {
+			if (appendTypeAttribute) {
+				scriptStartTag = "<script type=\"text/javascript\" src=\"";
+			}
+			else {
+				scriptStartTag = "<script src=\"";
+			}
 		}
-		else {
-			scriptStartTag = "<script src=\"";
-		}
+
 		String scriptEndTag = "\"></script>";
 		String fallbackStartTag;
 		String fallbackEndTag;
 		if (ERXAjaxApplication.isAjaxRequest(context.request()) && ERXProperties.booleanForKeyWithDefault("er.extensions.loadOnDemand", true)) {
 			if (!ERXAjaxApplication.isAjaxReplacement(context.request()) || ERXProperties.booleanForKeyWithDefault("er.extensions.loadOnDemandDuringReplace", false)) {
 				if (appendTypeAttribute) {
-					fallbackStartTag = "<script type=\"text/javascript\">AOD.loadScript('";
+					if (asModule) {
+						fallbackStartTag = "<script type=\"text/javascript\">AOD.loadScriptAsModule('";
+					} else {
+						fallbackStartTag = "<script type=\"text/javascript\">AOD.loadScript('";
+					}
 				}
 				else {
-					fallbackStartTag = "<script>AOD.loadScript('";
+					if (asModule) {
+						fallbackStartTag = "<script>AOD.loadScriptAsModule('";
+					} else {
+						fallbackStartTag = "<script>AOD.loadScript('";
+					}
 				}
 				fallbackEndTag = "')</script>";
 			}
@@ -447,6 +482,7 @@ public class ERXResponseRewriter {
 		}
 		ERXResponseRewriter.addResourceInHead(response, context, framework, fileName, scriptStartTag, scriptEndTag, fallbackStartTag, fallbackEndTag, TagMissingBehavior.Inline);
 	}
+	
 
 	/**
 	 * Adds a stylesheet link tag with a correct resource URL in the HTML head
