@@ -401,6 +401,8 @@ public class ERXResponseRewriter {
 		return inserted;
 	}
 	
+	public static final String AS_MODULE = "module";
+	
 	/**
 	 * Adds a script tag with a correct resource URL into the HTML head tag if
 	 * it isn't already present in the response, or inserts an Ajax OnDemand tag
@@ -416,7 +418,12 @@ public class ERXResponseRewriter {
 	 *            the name of the javascript file to add
 	 */
 	public static void addScriptResourceInHead(WOResponse response, WOContext context, String framework, String fileName) {
-		addScriptResourceInHead(response, context, framework, fileName, false /*asModule*/);
+		boolean appendTypeAttribute = ERXProperties.booleanForKeyWithDefault("er.extensions.ERXResponseRewriter.javascriptTypeAttribute", false);
+		if (appendTypeAttribute)
+			addScriptResourceInHead(response, context, framework, fileName, "text/javascript");
+		else {
+			addScriptResourceInHead(response, context, framework, fileName, null);
+		}
 	}
 
 	/**
@@ -432,24 +439,21 @@ public class ERXResponseRewriter {
 	 *            the framework that contains the file
 	 * @param fileName
 	 *            the name of the javascript file to add
-	 * @param asModule
-	 *            when true, inserts into head tag as type=module
+	 * @param type
+	 *            when not null, inserts into head tag as type = [parameter value]. when type = module, it calls AOD.loadScriptAsModule
+	 *            
+	 * @see wonder.js
 	 */
-	public static void addScriptResourceInHead(WOResponse response, WOContext context, String framework, String fileName, boolean asModule) {
+	public static void addScriptResourceInHead(WOResponse response, WOContext context, String framework, String fileName, String type) {
+		boolean asModule = AS_MODULE.equals(type);
 		boolean appendTypeAttribute = ERXProperties.booleanForKeyWithDefault("er.extensions.ERXResponseRewriter.javascriptTypeAttribute", false);
 
 		String scriptStartTag;
-		if (asModule) {
-			scriptStartTag = "<script type=\"module\" src=\"";
+		if (type != null) {
+			scriptStartTag = "<script type=\"" + type + "\" src=\"";
 		} else {
-			if (appendTypeAttribute) {
-				scriptStartTag = "<script type=\"text/javascript\" src=\"";
-			}
-			else {
-				scriptStartTag = "<script src=\"";
-			}
+			scriptStartTag = "<script src=\"";
 		}
-
 		String scriptEndTag = "\"></script>";
 		String fallbackStartTag;
 		String fallbackEndTag;
