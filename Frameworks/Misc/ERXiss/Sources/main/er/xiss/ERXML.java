@@ -17,7 +17,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-import com.webobjects.foundation.NSTimeZone;
 import com.webobjects.foundation.NSTimestamp;
 
 /**
@@ -29,8 +28,9 @@ import com.webobjects.foundation.NSTimestamp;
  */
 public class ERXML {
 
+	
   /** Version ID */
-  public static final NSTimestamp versionDate = new NSTimestamp(2009, 11, 24, 0, 0, 0, NSTimeZone.systemTimeZone());
+  public static final NSTimestamp versionDate = new NSTimestamp(2009, 11, 24, 0, 0, 0, null);
 
   /**
    * Item is the base class of everything that can appear in an XML document. 
