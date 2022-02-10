@@ -5,11 +5,8 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-// Aaron - AC-1808 - these are private objects that should have never been used and have now been removed from modern JDK versions. 
-// We don't really need to use ERProfiling, though it is handy sometimes, so commenting it out and crippling it for now.
-// https://github.com/wocommunity/wonder/issues/943
-//import sun.misc.Resource;
-//import sun.misc.URLClassPath;
+import sun.misc.Resource;
+import sun.misc.URLClassPath;
 
 /**
  * The WeavingClassLoader is a custom URLClassLoader that implements the 
@@ -87,19 +84,19 @@ public class WeavingClassLoader extends URLClassLoader {
 		}
 
 		String path = name.replace('.', '/').concat(".class");
-//		Resource res = new URLClassPath(getURLs()).getResource(path, false);
-//		if (res != null) {
-//			try {
-//				byte[] b = res.getBytes();
-//				byte[] transformed = transformer.transform(this, name, null,
-//						null, b);
-//				if (transformed == null)
-//					transformed = b;
-//				return defineClass(name, transformed, 0, transformed.length);
-//			} catch (Exception e) {
-//				return super.findClass(name);
-//			}
-//		}
+		Resource res = new URLClassPath(getURLs()).getResource(path, false);
+		if (res != null) {
+			try {
+				byte[] b = res.getBytes();
+				byte[] transformed = transformer.transform(this, name, null,
+						null, b);
+				if (transformed == null)
+					transformed = b;
+				return defineClass(name, transformed, 0, transformed.length);
+			} catch (Exception e) {
+				return super.findClass(name);
+			}
+		}
 		return super.findClass(name);
 	}
 
