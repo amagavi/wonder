@@ -110,12 +110,11 @@ public class ERXPatternLayout extends PatternLayout {
 	public PatternParser createPatternParser(String pattern) {
 		return new ERXPatternParser(pattern == null ? PatternLayout.DEFAULT_CONVERSION_PATTERN : pattern);
 	}
-}
 
 /**
  * Pattern parser extension that adds support for WebObjects specific patterns.
  */
-class ERXPatternParser extends PatternParser {
+public class ERXPatternParser extends PatternParser {
 
 	/**
 	 * Default constructor for a given pattern
@@ -551,4 +550,5 @@ class ERXPatternParser extends PatternParser {
 		}
 	}
 
+}
 }
