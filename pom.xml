@@ -812,6 +812,16 @@
                 <version>2.2.1</version>
             </dependency>
             <dependency>
+                <!-- AC-4439: streambuffer 1.1 (via jaxws-rt 2.2.1) declares this as
+                     RELEASE. Pin the version Central has resolved it to since 2022
+                     so no metadata lookup is needed; Maven 3.8.4 can truncate that
+                     metadata file to 0 bytes when the blocked java.net repo is in
+                     play (Mel-2023 build failure 2026-10-26). -->
+                <groupId>org.jvnet.staxex</groupId>
+                <artifactId>stax-ex</artifactId>
+                <version>2.1.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>1.1.1</version>
